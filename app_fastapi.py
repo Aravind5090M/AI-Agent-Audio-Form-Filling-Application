@@ -118,7 +118,7 @@ def poll_assemblyai_for_result(transcript_id: str, headers: dict):
             polling_result = polling_response.json()
             if polling_result['status'] in ['completed', 'error']:
                 return polling_result
-            time.sleep(3)
+            time.sleep(1)  # Reduced from 3 to 1 second for faster checking
         except requests.exceptions.RequestException as e:
             return None
 
@@ -140,7 +140,7 @@ def transcribe_audio(api_key: str, audio_file_path: str, language_preference: st
         'audio_url': upload_url,
         'punctuate': True,
         'format_text': True,
-        'speech_model': 'best'
+        'speech_model': 'nano'  # Fastest model (nano < best). Use 'best' for higher accuracy
     }
     
     if speaker_labels:
