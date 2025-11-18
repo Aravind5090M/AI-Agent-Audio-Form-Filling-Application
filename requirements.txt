@@ -1,0 +1,21 @@
+# Original Streamlit Dependencies (kept for reference/backward compatibility)
+streamlit==1.35.0
+#streamlit-webrtc==0.47.6
+aiortc==1.6.0
+requests==2.31.0
+numpy==1.26.4
+# av==11.0.0
+python-dotenv==1.0.1
+
+# FastAPI Dependencies (for HTML/CSS/FastAPI version)
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# AI Stack with all conflicts resolved
+openai==1.35.7
+crewai==0.35.8
+langchain==0.1.20
+langchain-openai==0.1.7
+langchain-community==0.0.38

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Q&A Analysis</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <h1>🏠 Real Estate Inspection Assistant</h1>
+        </header>
+
+        <nav class="navigation">
+            <a href="/form-filler" class="nav-button secondary">
+                🏠 Real Estate Inspection Form
+            </a>
+            <a href="/qna-analysis" class="nav-button primary">
+                🎙️ Property Q&A Analysis
+            </a>
+        </nav>
+
+        <hr class="divider">
+
+        <div class="page-header">
+            <h2>🎙️ Property Q&A with AI Analysis</h2>
+            <p class="page-description">Select a question from the sidebar to begin. Answer using your voice, confirm the recording, and see the AI-powered analysis.</p>
+        </div>
+
+        <div class="layout-two-column">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>🔑 API Configuration</h3>
+                    <div id="apiStatus" class="api-status">
+                        <div class="status-item">
+                            <span id="openaiStatus">⏳ Checking OpenAI...</span>
+                        </div>
+                        <div class="status-item">
+                            <span id="assemblyaiStatus">⏳ Checking AssemblyAI...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <div class="sidebar-section">
+                    <h3>🎙️ Audio Settings</h3>
+                    <div class="form-group">
+                        <label for="languageSelect">Select Recording Language</label>
+                        <select id="languageSelect" class="form-select">
+                            <option value="auto">Automatic Detection</option>
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="te">Telugu</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <div class="sidebar-section">
+                    <h3>📋 Questions</h3>
+                    <p>Select a question to answer:</p>
+                    <div id="questionsList" class="questions-list"></div>
+                </div>
+
+                <hr class="divider">
+
+                <div class="sidebar-section">
+                    <h3>➕ Add Custom Question</h3>
+                    <textarea id="customQuestionInput" 
+                              placeholder="Type your question here..." 
+                              class="form-textarea"></textarea>
+                    <div class="button-row">
+                        <button id="addQuestionBtn" class="btn-primary">Add Question</button>
+                        <button id="clearCustomBtn" class="btn-secondary">Clear Custom</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <div id="allCompleteSection" style="display:none">
+                    <div class="success-banner">
+                        <h2>✅ All Questions Answered!</h2>
+                        <div class="button-row">
+                            <button id="saveQnABtn" class="btn-success">💾 Save Q&A Analysis as JSON</button>
+                            <button id="newSessionBtn" class="btn-primary">🔄 Start New Q&A Session</button>
+                        </div>
+                    </div>
+                    <hr class="divider">
+                    <h3>📋 Complete Q&A Analysis Summary</h3>
+                    <div id="completeSummary"></div>
+                </div>
+
+                <div id="questionSection">
+                    <div class="question-header">
+                        <h3 id="questionNumber">Question 1/3</h3>
+                        <h2 id="currentQuestion" class="current-question"></h2>
+                    </div>
+
+                    <!-- Previously Saved Answer View -->
+                    <div id="savedAnswerView" style="display:none">
+                        <div class="info-banner">
+                            <p>✅ This question has been answered. You can review your response below:</p>
+                        </div>
+
+                        <div class="content-split">
+                            <div class="review-section">
+                                <h4>📝 Original Transcription</h4>
+                                <textarea id="savedTranscription" class="form-textarea" disabled></textarea>
+                                
+                                <h4 style="margin-top: 20px">🎵 Audio Recording</h4>
+                                <audio id="savedAudio" controls style="width: 100%"></audio>
+                            </div>
+
+                            <div class="review-section">
+                                <h4>🤖 AI Analysis</h4>
+                                <div id="savedAnalysis" class="info-box"></div>
+                                
+                                <h4 style="margin-top: 20px">📊 Quality Score</h4>
+                                <div id="savedScore" class="info-box"></div>
+                            </div>
+                        </div>
+
+                        <hr class="divider">
+                        <div class="button-row">
+                            <button id="reRecordQuestionBtn" class="btn-warning">🔄 Re-record This Answer</button>
+                            <button id="nextUnansweredBtn" class="btn-primary" style="display:none">➡️ Go to Next Unanswered</button>
+                            <button id="viewAllBtn" class="btn-secondary">📋 View All Answers</button>
+                        </div>
+                    </div>
+
+                    <!-- New Answer Recording View -->
+                    <div id="newAnswerView">
+                        <div class="answer-card">
+                            <h4>📝 Your Answer</h4>
+                            <textarea id="answerText" class="form-textarea" placeholder="Your transcribed answer will appear here..." disabled></textarea>
+                            
+                            <button id="recordAnswerBtn" class="btn-record btn-full">🎙️ Record Answer</button>
+                            
+                            <!-- Analysis Results Section (shown after processing) -->
+                            <div id="analysisSection" style="display:none; margin-top: 30px">
+                                <hr class="divider">
+                                <h4>🤖 AI Analysis</h4>
+                                <div id="aiAnalysis" class="success-box"></div>
+                                
+                                <h4 style="margin-top: 20px">📊 Quality Score</h4>
+                                <div id="qualityScore" class="info-box"></div>
+                                
+                                <div class="button-row" style="margin-top: 20px">
+                                    <button id="saveAnswerBtn" class="btn-success">💾 Save Answer & Continue</button>
+                                    <button id="reRecordAnswerBtn" class="btn-secondary">🔄 Re-record</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Recording Modal -->
+    <div id="recordingModal" class="modal">
+        <div class="modal-content">
+            <h3>Recording Answer...</h3>
+            <div class="recording-indicator">
+                <div class="pulse"></div>
+                <p>🔴 Recording in progress...</p>
+                <p class="hint">Click "Stop Recording" when finished</p>
+            </div>
+            <div class="modal-actions">
+                <button id="stopRecordingBtn" class="btn-danger">⏹️ Stop Recording</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirm Recording</h3>
+            <div id="confirmBody">
+                <audio id="audioPlayback" controls style="width: 100%; margin: 20px 0"></audio>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmRecordBtn" class="btn-success">✅ Confirm & Process</button>
+                <button id="reRecordBtn" class="btn-secondary">🔄 Re-record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div id="processingModal" class="modal">
+        <div class="modal-content">
+            <h3>Processing...</h3>
+            <div id="processingBody">
+                <div class="loader"></div>
+                <p id="processingText">Transcribing and analyzing your answer...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/qna_analysis.js"></script>
+</body>
+</html>
